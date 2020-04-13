@@ -1,0 +1,19 @@
+name: MadHatter Continuous Deployment
+
+on: push
+  branches:
+      - master
+        
+env:
+  SERVER: production
+
+jobs:
+  runner_setup:
+    name: Runner Setup
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check Out Repository
+      uses: actions/checkout@v2
+    - name: Install AWS CLI
+      run: ./.github/scripts/install-aws-cli.sh
+      shell: bash
