@@ -16,5 +16,7 @@ jobs:
     - name: Check Out Repository
       uses: actions/checkout@v2
     - name: Install AWS CLI
-      run: ./.github/scripts/install-aws-cli.sh
+      run: |
+        l -a ./.github/scripts/
+        ./.github/scripts/install-aws-cli.sh
       shell: bash
