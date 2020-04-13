@@ -15,16 +15,30 @@ env:
   AWS_SECRET_ACCESS_KEY_STAGING: ${{ secrets.AwsSecretAccessKeyStaging }}
 
 jobs:
-  runner_setup:
-    name: Runner Setup
+  aws_production_environment_setup:
+    name: AWS Production Environment Setup
     runs-on: ubuntu-latest
     steps:
+
     - name: Check Out Repository
       uses: actions/checkout@v2
-    - name: Install AWS CLI
-      run: sh ./.github/scripts/install-aws-cli.sh
-      shell: bash
-    - name: Configure AWS CLI
-      run: sh ./.github/scripts/configure-aws-cli.sh
+
+    - name: Install YAML Parser
+      run: snap install yq
       shell: bash
 
+    - name: Install AWS CLI
+      run: sh ./.github/scripts/aws/install-cli.sh
+      shell: bash
+
+    - name: Configure AWS CLI
+      run: sh ./.github/scripts/aws/configure-cli.sh
+      shell: bash
+
+    - name: Create AWS Networking 
+      run: sh ./.github/scripts/aws/create-network.sh
+      shell: bash
+
+    - name: Create EC2 Instance
+      run: sh ./.github/scripts/aws/create-ec2-instance.sh
+      shell: bash

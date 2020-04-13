@@ -1,7 +1,7 @@
 [profile production]
 region=ca-central-1
-output=json
+output=yaml
 
 [profile staging]
 region=ca-central-1
-output=json
+output=yaml
