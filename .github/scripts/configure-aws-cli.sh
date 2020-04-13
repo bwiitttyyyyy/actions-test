@@ -1,7 +1,6 @@
 echo "Configuring AWS CLI..."
 
-echo "cwd: $CWD"
-
+mkdir ~/.aws
 cp ./.github/resources/aws/* ~/.aws/
 
 echo "Creating production profile..."
