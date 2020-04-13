@@ -1,7 +1,7 @@
-[production]
+[profile production]
 region=ca-central-1
 output=json
 
-[staging]
+[profile staging]
 region=ca-central-1
 output=json
