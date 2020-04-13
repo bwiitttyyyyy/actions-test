@@ -1,3 +1,7 @@
-[default]
+[production]
+region=ca-central-1
+output=json
+
+[staging]
 region=ca-central-1
 output=json
