@@ -21,6 +21,7 @@ echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY_STAGING" >> ~/.aws/credential
 
 echo "Verifying..."
 
-aws configure list
+aws configure list --profile production
+aws configure list --profile staging 
 
 echo "Done."
