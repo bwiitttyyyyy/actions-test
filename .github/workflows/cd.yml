@@ -6,7 +6,13 @@ on:
       - master
         
 env:
-  SERVER: production
+  # the AWS credentials for the staging organization
+  AWS_ACCESS_KEY_ID_PRODUCTION: ${{ secrets.AwsAccessKeyIdProduction }}
+  AWS_SECRET_ACCESS_KEY_PRODUCTION: ${{ secrets.AwsSecretAccessKeyProduction }}
+  
+  # the AWS credentials for the staging organization
+  AWS_ACCESS_KEY_ID_STAGING: ${{ secrets.AwsAccessKeyIdStaging }}
+  AWS_SECRET_ACCESS_KEY_STAGING: ${{ secrets.AwsSecretAccessKeyStaging }}
 
 jobs:
   runner_setup:
@@ -16,7 +22,9 @@ jobs:
     - name: Check Out Repository
       uses: actions/checkout@v2
     - name: Install AWS CLI
-      run: |
-        ls -l ./.github/scripts/
-        sh ./.github/scripts/install-aws-cli.sh
+      run: sh ./.github/scripts/install-aws-cli.sh
       shell: bash
+    - name: Configure AWS CLI
+      run: sh ./.github/scripts/configure-aws-cli.sh
+      shell: bash
+
