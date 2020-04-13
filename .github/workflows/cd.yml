@@ -1,7 +1,8 @@
 name: MadHatter Continuous Deployment
 
-on: push
-  branches:
+on: 
+  push:
+    branches:
       - master
         
 env:
