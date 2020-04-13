@@ -18,5 +18,5 @@ jobs:
     - name: Install AWS CLI
       run: |
         ls -l ./.github/scripts/
-        ./.github/scripts/install-aws-cli.sh
+        sh ./.github/scripts/install-aws-cli.sh
       shell: bash
