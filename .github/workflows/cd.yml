@@ -6,6 +6,8 @@ on:
       - master
         
 env:
+  AWS_DEPLOYMENT_USERNAME: deployment@madhattertech.ca
+
   # the AWS credentials for the staging organization
   AWS_ACCESS_KEY_ID_PRODUCTION: ${{ secrets.AwsAccessKeyIdProduction }}
   AWS_SECRET_ACCESS_KEY_PRODUCTION: ${{ secrets.AwsSecretAccessKeyProduction }}
@@ -13,6 +15,8 @@ env:
   # the AWS credentials for the staging organization
   AWS_ACCESS_KEY_ID_STAGING: ${{ secrets.AwsAccessKeyIdStaging }}
   AWS_SECRET_ACCESS_KEY_STAGING: ${{ secrets.AwsSecretAccessKeyStaging }}
+
+  AWS_SSH_KEY: ${{ secrets.AwsSshKey }}
 
 jobs:
   aws_production_environment_setup:
@@ -35,16 +39,10 @@ jobs:
       run: sh ./.github/scripts/aws/configure-cli.sh
       shell: bash
 
-      #- name: Create AWS Networking 
-      #run: sh ./.github/scripts/aws/create-network.sh
-      #shell: bash
+    - name: Create AWS Networking 
+      run: sh ./.github/scripts/aws/create-network.sh
+      shell: bash
 
-      #- name: Create Key Pair
-      #run: sh ./.github/scripts/aws/create-key-pair.sh
-      #shell: bash
-
-      #- name: Create EC2 Instance
-      #run: sh ./.github/scripts/aws/create-ec2-instance.sh
-      # shell: bash
-    - name: Create issue using REST API
-      run: echo ${{ secrets.PUBLIC_KEY }}
+    - name: Create EC2 Instance
+      run: sh ./.github/scripts/aws/create-ec2-instance.sh
+      shell: bash
