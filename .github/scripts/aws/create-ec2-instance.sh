@@ -54,14 +54,14 @@ echo "Created instance with ID $INSTANCE_ID"
 # wait for instance become of state "running"
 echo "Waiting for instance $INSTANCE_ID to run..."
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
-EC2_INSTANCE_STATUS_CODE=(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
 while [ "$EC2_INSTANCE_STATUS_CODE" != "16" ]
 do
 echo "Status: $EC2_INSTANCE_STATUS_CODE"
 sleep 3s
 rm ec2-instance-status.yml
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
-EC2_INSTANCE_STATUS_CODE=(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
 done
 echo "Instance is now running"
 
