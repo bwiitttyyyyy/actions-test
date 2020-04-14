@@ -58,7 +58,7 @@ EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].Ins
 EC2_INSTANCE_STATUS_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
 while [ "$EC2_INSTANCE_STATUS_CODE" != "16" ]
 do
-  echo "Status: $(EC2_INSTANCE_STATUS_NAME || "pending")"
+  [ -z "$EC2_INSTANCE_STATUS_NAME" ] && echo "Status: pending" || echo  "Status: $EC2_INSTANCE_STATUS_NAME"
   sleep 5s
   rm ec2-instance-status.yml
   aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
@@ -81,6 +81,6 @@ echo "Created Elastic IP address $IP_ADDRESS"
 # ssh into the instance
 echo "Entering instance..."
 echo "$AWS_SSH_KEY" >> aws_ssh_key
-ssh -i -T aws_ssh_key centos@$IP_ADDRESS
+ssh -T -i aws_ssh_key centos@$IP_ADDRESS
 
 echo "Done."
