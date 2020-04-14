@@ -49,7 +49,7 @@ jobs:
       shell: bash
 
     - name: Add DevOps Users to EC2 Instance
-      run: sh ./.github/scripts/centos/add-users.sh
+      run: bash ./.github/scripts/centos/add-users.sh
       shell: bash
 
     - name: Setup CentOS
