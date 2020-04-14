@@ -3,7 +3,7 @@
 echo "Setting up CentOS..."
 
 # get IP address of instance
-IP_ADDRESS=$(yq r elastic-ip.yml ElasticIp)
+IP_ADDRESS=$(yq r elastic-ip.yml PublicIp)
 
 # create the SSH key for the new instance from the github secret
 if test -f "$AWS_SSH_KEY_FILENAME";

@@ -32,9 +32,9 @@ USER_PUBLIC_KEY=$(aws iam get-ssh-public-key --user-name $USERNAME --ssh-public-
 
 # create a user with this name
 ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS <<-HERE
-useradd $USERNAME
-passwd -d $USERNAME
-usermod -aG wheel $USERNAME
+sudo useradd $USERNAME
+sudo passwd -d $USERNAME
+sudo usermod -aG wheel $USERNAME
 su - $USERNAME
 mkdir -p ~/.ssh
 touch ~/.ssh/authorized_keys
