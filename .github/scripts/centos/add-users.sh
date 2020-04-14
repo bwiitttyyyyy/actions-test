@@ -28,7 +28,7 @@ do
     | yq r - SSHPublicKey.SSHPublicKeyBody)
   
   # create a user with this name
-  ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS << '
+  ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS << HERE
     useradd $USERNAME
     passwd -d $USERNAME
     usermod -aG wheel $USERNAME
@@ -38,7 +38,7 @@ do
     chmod -R go= ~/.ssh
     chown -R $USERNAME:$USERNAME ~/.ssh
     cat $USER_PUBLIC_KEY >> ~/.ssh/authorized_keys
-  ' 2>&1
+  HERE 2>&1
 done
 
 echo "Done."
