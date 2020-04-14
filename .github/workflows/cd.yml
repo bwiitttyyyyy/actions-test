@@ -39,7 +39,7 @@ jobs:
       run: sh ./.github/scripts/aws/configure-cli.sh
       shell: bash
 
-    - name: Create AWS Networking 
+    - name: Create AWS Networking Infrastructure
       run: sh ./.github/scripts/aws/create-network.sh
       shell: bash
 
