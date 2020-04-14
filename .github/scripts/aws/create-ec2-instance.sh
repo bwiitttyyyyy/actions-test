@@ -2,6 +2,8 @@
 
 echo "Creating EC2 instance..."
 
+aws iam get-group --group-name DevOps --profile production 
+exit 1
 # find deployment user key pair ID
 #aws iam list-users >> users.yml
 #N_USERS=$(yq r users.yml --collect --length Users.*.UserName)
@@ -94,8 +96,24 @@ do
   EC2_INSTANCE_STATUS=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceStatus.Status)
 done
 
+# add users to the instance
+echo "Adding DevOps users to the instance..."
+aws iam get-group --group-name DevOps --profile production >> devops-users.yml
+N_USERS=$(yq r devops-users.yml --collect --length Users.*.UserName)
+
+for (( USER_INDEX = 0; USER_INDEX <= $N_USERS; USER_INDEX++ ));
+do
+  USERNAME=$(yq r users.yml Users.[$USER_INDEX].UserName)
+  USER_ID=$(yq r users.yml Users.[$USER_INDEX].UserId)
+  if [ "$USERNAME" == $AWS_DEPLOYMENT_USERNAME ]
+    
+  fi
+done
+
+
 # ssh into the instance
 echo "Entering instance..."
+
 
 # create the SSH key from the Github Secret
 echo "$AWS_SSH_KEY" >> aws_ssh_key
