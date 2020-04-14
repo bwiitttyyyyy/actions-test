@@ -97,7 +97,7 @@ done
 # ssh into the instance
 echo "Entering instance..."
 echo "$AWS_SSH_KEY" >> aws_ssh_key
-ssh -A -T -i aws_ssh_key root@$IP_ADDRESS "hostname" > fill
+ssh -A -T -o StrictHostKeyChecking=no -i aws_ssh_key root@$IP_ADDRESS "hostname" > fill
 cat fill
 
 echo "Done."
