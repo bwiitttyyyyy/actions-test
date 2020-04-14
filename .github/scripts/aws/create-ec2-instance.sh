@@ -25,8 +25,11 @@ VPC_ID=$(yq r vpc.yml Vpc.VpcId)
 aws ec2 create-security-group --group-name ec2-$GITHUB_SHA --description "Security group for EC2 instance of application at commit $GITHUB_SHA" --vpc-id $VPC_ID --profile production >> ec2-security-group.yml
 EC2_SECURITY_GROUP_ID=$(yq r ec2-security-group.yml GroupId)
 aws ec2 create-tags --resources $EC2_SECURITY_GROUP_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
+echo "Enable all outbound traffic..."
+aws ec2 authorize-security-group-egress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
 echo "Enabling SSH access..."
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --profile production
+aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
 echo "Enabling HTTP ingress access..."
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 80 --cidr 0.0.0.0/0 --profile production
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,FromPort=80,ToPort=80,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
@@ -52,7 +55,7 @@ aws ec2 create-tags --resources $INSTANCE_ID --tags Key=commit,Value=$GITHUB_SHA
 echo "Created instance with ID $INSTANCE_ID"
 
 # wait for instance become of state "running"
-echo "Waiting for instance $INSTANCE_ID to be up and running..."
+echo "Waiting for instance $INSTANCE_ID to become available for IP address allocation..."
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
 EC2_INSTANCE_STATE_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
 EC2_INSTANCE_STATE_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
@@ -78,14 +81,14 @@ echo "Created Elastic IP address $IP_ADDRESS"
 
 # will neeeeeed to get all of the users' ssh keys here before we log in
 
-echo "Waiting for instance $INSTANCE_ID to become reachable..."
+echo "Waiting for instance $INSTANCE_ID to complete initialization..."
 rm ec2-instance-status.yml
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
 EC2_INSTANCE_STATUS=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceStatus.Status)
 while [ "$EC2_INSTANCE_STATUS" != "ok" ]
 do
   [ -z "$EC2_INSTANCE_STATUS" ] && echo "Status: initializing" || echo  "Status: $EC2_INSTANCE_STATUS"
-  sleep 5s
+  sleep 10s
   rm ec2-instance-status.yml
   aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
   EC2_INSTANCE_STATUS=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceStatus.Status)
@@ -94,7 +97,6 @@ done
 # ssh into the instance
 echo "Entering instance..."
 echo "$AWS_SSH_KEY" >> aws_ssh_key
-cat aws_ssh_key
 ssh -T -i aws_ssh_key root@$IP_ADDRESS "hostname" > fill
 cat fill
 
