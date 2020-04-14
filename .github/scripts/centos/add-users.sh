@@ -14,11 +14,13 @@ fi
 # add users to the instance
 echo "Adding DevOps users to the instance..."
 aws iam get-group --group-name DevOps --profile production >> devops-users.yml
+cat devops-user.yml
 N_USERS=$(yq r devops-users.yml --collect --length Users.*.UserName)
+echo "Found $N_USERS users"
 for (( USER_INDEX = 0; USER_INDEX <= $N_USERS; USER_INDEX++ ));
 do
-  USERNAME=$(yq r users.yml Users.[$USER_INDEX].UserName)
-  USER_ID=$(yq r users.yml Users.[$USER_INDEX].UserId)
+  USERNAME=$(yq r devops-users.yml Users.[$USER_INDEX].UserName)
+  USER_ID=$(yq r devops-users.yml Users.[$USER_INDEX].UserId)
 
   # get the user's public key
   USER_PUBLIC_KEY_ID=$(aws iam list-ssh-public-keys --user-name $USERNAME --profile production | yq r - SSHPublicKeys.[0].SSHPublicKeyId)
