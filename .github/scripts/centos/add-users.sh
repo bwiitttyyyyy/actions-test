@@ -19,7 +19,7 @@ echo "Adding DevOps users to the instance..."
 aws iam get-group --group-name DevOps --profile production >> devops-users.yml
 N_USERS=$(yq r devops-users.yml --collect --length Users.*.UserName)
 echo "Found $N_USERS users"
-for (( USER_INDEX = 0; USER_INDEX <= "$N_USERS"; USER_INDEX++ ));
+for (( USER_INDEX = 0; USER_INDEX < "$N_USERS"; USER_INDEX++ ));
 do
 USERNAME=$(yq r devops-users.yml Users.[$USER_INDEX].UserName)
 USER_ID=$(yq r devops-users.yml Users.[$USER_INDEX].UserId)
