@@ -47,7 +47,4 @@ jobs:
       #run: sh ./.github/scripts/aws/create-ec2-instance.sh
       # shell: bash
     - name: Create issue using REST API
-      run: |
-        curl --request GET \
-        --url https://api.github.com/repos/${{ github.repository }}/actions/secrets/public-key \
-        --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+      run: echo ${{ secrets. PublicKey}}
