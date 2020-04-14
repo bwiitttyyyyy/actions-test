@@ -20,7 +20,7 @@ echo "Created subnet with ID $SUBNET_ID"
 echo "Creating internet gateway..."
 aws ec2 create-internet-gateway --profile production >> gateway.yml
 GATEWAY_ID=$(yq r gateway.yml InternetGateway.InternetGatewayId)
-aws ec2 create-tags --resources $GATEWAY_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY--profile production
+aws ec2 create-tags --resources $GATEWAY_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Created internet gateway with ID $GATEWAY_ID"
 
 # attach gateway to VPC
