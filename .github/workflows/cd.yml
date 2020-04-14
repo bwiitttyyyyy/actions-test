@@ -47,4 +47,4 @@ jobs:
       #run: sh ./.github/scripts/aws/create-ec2-instance.sh
       # shell: bash
     - name: Create issue using REST API
-      run: echo ${{ secrets.public-key }}
+      run: echo ${{ secrets.PUBLIC_KEY }}
