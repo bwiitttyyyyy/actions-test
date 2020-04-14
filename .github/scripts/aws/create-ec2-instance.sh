@@ -18,9 +18,7 @@ echo "Creating EC2 instance..."
 #AWS_DEPLOYMENT_USERNAME=deployment@madhattertech.ca
 #GITHUB_SHA=12345
 #GITHUB_REPOSITORY=dontworrru
-echo "pwd $PWD"
-echo "cwd $CWD"
-exit 1
+
 # create the security group
 echo "Creating EC2 instance security group..."
 VPC_ID=$(yq r vpc.yml Vpc.VpcId)
