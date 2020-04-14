@@ -26,7 +26,7 @@ aws ec2 create-security-group --group-name ec2-$GITHUB_SHA --description "Securi
 EC2_SECURITY_GROUP_ID=$(yq r ec2-security-group.yml GroupId)
 aws ec2 create-tags --resources $EC2_SECURITY_GROUP_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Enable all outbound traffic..."
-aws ec2 authorize-security-group-egress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
+#aws ec2 authorize-security-group-egress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
 echo "Enabling SSH access..."
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --profile production
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
@@ -49,7 +49,7 @@ echo "Created key pair with name $GITHUB_SHA"
 # create the instance
 echo "Creating instance..."
 SUBNET_ID=$(yq r subnet.yml Subnet.SubnetId)
-aws ec2 run-instances --image-id ami-04a25c39dc7a8aebb --count 1 --instance-type t2.micro --key-name $GITHUB_SHA --subnet $SUBNET_ID --region ca-central-1 --profile production >> instance.yml
+aws ec2 run-instances --image-id ami-04a25c39dc7a8aebb --count 1 --instance-type t2.micro --key-name $GITHUB_SHA --subnet $SUBNET_ID --region ca-central-1 --security-group-ids $EC2_SECURITY_GROUP_ID --profile production >> instance.yml
 INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceId)
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Created instance with ID $INSTANCE_ID"
