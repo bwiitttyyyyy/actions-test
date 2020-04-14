@@ -19,26 +19,26 @@ N_USERS=$(yq r devops-users.yml --collect --length Users.*.UserName)
 echo "Found $N_USERS users"
 for (( USER_INDEX = 0; USER_INDEX <= "$N_USERS"; USER_INDEX++ ));
 do
-  USERNAME=$(yq r devops-users.yml Users.[$USER_INDEX].UserName)
-  USER_ID=$(yq r devops-users.yml Users.[$USER_INDEX].UserId)
+USERNAME=$(yq r devops-users.yml Users.[$USER_INDEX].UserName)
+USER_ID=$(yq r devops-users.yml Users.[$USER_INDEX].UserId)
 
-  # get the user's public key
-  USER_PUBLIC_KEY_ID=$(aws iam list-ssh-public-keys --user-name $USERNAME --profile production | yq r - SSHPublicKeys.[0].SSHPublicKeyId)
-  USER_PUBLIC_KEY=$(aws iam get-ssh-public-key --user-name $AWS_DEPLOYMENT_USERNAME --ssh-public-key-id $AWS_DEPLOYMENT_PUBLIC_KEY_ID --encoding SSH --profile production \
-    | yq r - SSHPublicKey.SSHPublicKeyBody)
-  
-  # create a user with this name
-  ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS << HERE
-    useradd $USERNAME
-    passwd -d $USERNAME
-    usermod -aG wheel $USERNAME
-    su - $USERNAME
-    mkdir -p ~/.ssh
-    touch ~/.ssh/authorized_keys
-    chmod -R go= ~/.ssh
-    chown -R $USERNAME:$USERNAME ~/.ssh
-    cat $USER_PUBLIC_KEY >> ~/.ssh/authorized_keys
-  HERE 2>&1
+# get the user's public key
+USER_PUBLIC_KEY_ID=$(aws iam list-ssh-public-keys --user-name $USERNAME --profile production | yq r - SSHPublicKeys.[0].SSHPublicKeyId)
+USER_PUBLIC_KEY=$(aws iam get-ssh-public-key --user-name $AWS_DEPLOYMENT_USERNAME --ssh-public-key-id $AWS_DEPLOYMENT_PUBLIC_KEY_ID --encoding SSH --profile production \
+  | yq r - SSHPublicKey.SSHPublicKeyBody)
+
+# create a user with this name
+ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS <<-HERE
+useradd $USERNAME
+passwd -d $USERNAME
+usermod -aG wheel $USERNAME
+su - $USERNAME
+mkdir -p ~/.ssh
+touch ~/.ssh/authorized_keys
+chmod -R go= ~/.ssh
+chown -R $USERNAME:$USERNAME ~/.ssh
+cat $USER_PUBLIC_KEY >> ~/.ssh/authorized_keys
+HERE 2>&1
 done
 
 echo "Done."
