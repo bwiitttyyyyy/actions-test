@@ -54,16 +54,16 @@ echo "Created instance with ID $INSTANCE_ID"
 # wait for instance become of state "running"
 echo "Waiting for instance $INSTANCE_ID to be up and running..."
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
-EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
-EC2_INSTANCE_STATUS_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
-while [ "$EC2_INSTANCE_STATUS_CODE" != "16" ]
+EC2_INSTANCE_STATE_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+EC2_INSTANCE_STATE_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
+while [ "$EC2_INSTANCE_STATE_CODE" != "16" ]
 do
-  [ -z "$EC2_INSTANCE_STATUS_NAME" ] && echo "Status: pending" || echo  "Status: $EC2_INSTANCE_STATUS_NAME"
+  [ -z "$EC2_INSTANCE_STATE_NAME" ] && echo "Status: pending" || echo  "Status: $EC2_INSTANCE_STATE_NAME"
   sleep 5s
   rm ec2-instance-status.yml
   aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
-  EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
-  EC2_INSTANCE_STATUS_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
+  EC2_INSTANCE_STATE_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+  EC2_INSTANCE_STATE_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
 done
 echo "Instance is now running"
 
@@ -77,6 +77,19 @@ aws ec2 associate-address --allocation-id $ELASTIC_IP_ALLOCATION_ID --instance-i
 echo "Created Elastic IP address $IP_ADDRESS"
 
 # will neeeeeed to get all of the users' ssh keys here before we log in
+
+echo "Waiting for instance $INSTANCE_ID to become reachable..."
+rm ec2-instance-status.yml
+aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
+EC2_INSTANCE_STATUS=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceStatus.Status)
+while [ "$EC2_INSTANCE_STATUS" != "ok" ]
+do
+  [ -z "$EC2_INSTANCE_STATUS" ] && echo "Status: initializing" || echo  "Status: $EC2_INSTANCE_STATUS"
+  sleep 5s
+  rm ec2-instance-status.yml
+  aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
+  EC2_INSTANCE_STATUS=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceStatus.Status)
+done
 
 # ssh into the instance
 echo "Entering instance..."
