@@ -1,25 +1,10 @@
 #!/bin/bash
 
-echo "Creating EC2 instance..."
-
-aws iam get-group --group-name DevOps --profile production 
-exit 1
-# find deployment user key pair ID
-#aws iam list-users >> users.yml
-#N_USERS=$(yq r users.yml --collect --length Users.*.UserName)
-#
-#for (( USER_INDEX = 0; USER_INDEX <= $N_USERS; USER_INDEX++ ));
-#do
-#  USERNAME=$(yq r users.yml Users.[$USER_INDEX].UserName)
-#  USER_ID=$(yq r users.yml Users.[$USER_INDEX].UserId)
-#  if [ "$USERNAME" == $AWS_DEPLOYMENT_USERNAME ]
-#    
-#  fi
-#done
-
 #AWS_DEPLOYMENT_USERNAME=deployment@madhattertech.ca
 #GITHUB_SHA=12345
 #GITHUB_REPOSITORY=dontworrru
+
+echo "Creating EC2 instance..."
 
 # create the security group
 echo "Creating EC2 instance security group..."
@@ -48,6 +33,7 @@ aws iam get-ssh-public-key --user-name $AWS_DEPLOYMENT_USERNAME --ssh-public-key
 echo "WARNING: this may complain about a duplicate key ... this is not an issue"
 aws ec2 import-key-pair --key-name $GITHUB_SHA --public-key-material fileb://$PWD/ssh.pub --profile production
 echo "Created key pair with name $GITHUB_SHA"
+
 # create the instance
 echo "Creating instance..."
 SUBNET_ID=$(yq r subnet.yml Subnet.SubnetId)
@@ -81,8 +67,8 @@ echo "Associating IP..."
 aws ec2 associate-address --allocation-id $ELASTIC_IP_ALLOCATION_ID --instance-id $INSTANCE_ID --profile production
 echo "Created Elastic IP address $IP_ADDRESS"
 
-# will neeeeeed to get all of the users' ssh keys here before we log in
 
+# wait for the instance to complete initialization so that we can connect to it
 echo "Waiting for instance $INSTANCE_ID to complete initialization..."
 rm ec2-instance-status.yml
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
@@ -95,30 +81,5 @@ do
   aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
   EC2_INSTANCE_STATUS=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceStatus.Status)
 done
-
-# add users to the instance
-echo "Adding DevOps users to the instance..."
-aws iam get-group --group-name DevOps --profile production >> devops-users.yml
-N_USERS=$(yq r devops-users.yml --collect --length Users.*.UserName)
-
-for (( USER_INDEX = 0; USER_INDEX <= $N_USERS; USER_INDEX++ ));
-do
-  USERNAME=$(yq r users.yml Users.[$USER_INDEX].UserName)
-  USER_ID=$(yq r users.yml Users.[$USER_INDEX].UserId)
-  if [ "$USERNAME" == $AWS_DEPLOYMENT_USERNAME ]
-    
-  fi
-done
-
-
-# ssh into the instance
-echo "Entering instance..."
-
-
-# create the SSH key from the Github Secret
-echo "$AWS_SSH_KEY" >> aws_ssh_key
-sudo chmod 600 aws_ssh_key
-ssh -A -T -o StrictHostKeyChecking=no -i aws_ssh_key centos@$IP_ADDRESS 'bash -s' < $PWD/.github/scripts/centos/os-setup.sh 2>&1
-
 
 echo "Done."

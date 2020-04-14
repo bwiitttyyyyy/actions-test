@@ -17,6 +17,7 @@ env:
   AWS_SECRET_ACCESS_KEY_STAGING: ${{ secrets.AwsSecretAccessKeyStaging }}
 
   AWS_SSH_KEY: ${{ secrets.AwsSshKey }}
+  AWS_SSH_KEY_FILENAME: aws_ssh_key
 
 jobs:
   aws_production_environment_setup:
@@ -45,4 +46,12 @@ jobs:
 
     - name: Create EC2 Instance
       run: sh ./.github/scripts/aws/create-ec2-instance.sh
+      shell: bash
+
+    - name: Add DevOps Users to EC2 Instance
+      run: sh ./.github/scripts/centos/add-users.sh
+      shell: bash
+
+    - name: Setup CentOS
+      run: sh ./.github/scripts/centos/setup.sh
       shell: bash
