@@ -83,4 +83,5 @@ echo "Entering instance..."
 echo "$AWS_SSH_KEY" >> aws_ssh_key
 cat $PWD/.github/scripts/centos/os-setup.sh | ssh -T -i aws_ssh_key centos@$IP_ADDRESS
 
+
 echo "Done."
