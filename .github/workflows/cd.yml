@@ -6,7 +6,7 @@ on:
       - master
         
 env:
-  AWS_DEPLOYMENT_USERNAME: deployment@madhattertech.ca
+  AWS_DEPLOYMENT_USERNAME: deployment-madhatter
 
   # the AWS credentials for the staging organization
   AWS_ACCESS_KEY_ID_PRODUCTION: ${{ secrets.AwsAccessKeyIdProduction }}
