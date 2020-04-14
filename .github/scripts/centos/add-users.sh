@@ -41,7 +41,7 @@ mkdir -p ~/.ssh
 touch ~/.ssh/authorized_keys
 chmod -R go= ~/.ssh
 chown -R $USERNAME:$USERNAME ~/.ssh
-cat "$USER_PUBLIC_KEY" >> ~/.ssh/authorized_keys
+echo "$USER_PUBLIC_KEY" >> ~/.ssh/authorized_keys
 HERE
 done
 
