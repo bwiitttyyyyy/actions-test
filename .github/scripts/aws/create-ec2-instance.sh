@@ -51,5 +51,4 @@ INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceId)
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Created instance with ID $INSTANCE_ID"
 
-
 echo "Done."
