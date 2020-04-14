@@ -38,7 +38,7 @@ touch ~/.ssh/authorized_keys
 chmod -R go= ~/.ssh
 chown -R $USERNAME:$USERNAME ~/.ssh
 cat $USER_PUBLIC_KEY >> ~/.ssh/authorized_keys
-HERE 2>&1
+HERE
 done
 
 echo "Done."
