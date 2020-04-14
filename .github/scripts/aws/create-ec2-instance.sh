@@ -31,6 +31,7 @@ aws ec2 import-key-pair --key-name $GITHUB_SHA --public-key-material fileb://$PW
 echo "Creating instance..."
 SUBNET_ID=$(yq r subnet.yml Subnet.SubnetId)
 aws ec2 run-instances --image-id ami-04a25c39dc7a8aebb --count 1 --instance-type t2.micro --key-name $GITHUB_SHA --subnet $SUBNET_ID --profile production >> instance.yml
-INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceIdm
+INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceId)
 aws ec2 create-tags --resources $ROUTE_TABLE_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
+
 echo "Done."
