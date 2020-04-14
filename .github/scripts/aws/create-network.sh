@@ -11,7 +11,7 @@ echo "Created VPC with ID $VPC_ID"
 
 # create subnet
 echo "Creating subnet..."
-aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.0.0/16 --profile production >> subnet.yml
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.0.0/16 --availability-zone ca-central-1a --profile production >> subnet.yml
 SUBNET_ID=$(yq r subnet.yml Subnet.SubnetId)
 aws ec2 create-tags --resources $SUBNET_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Created subnet with ID $SUBNET_ID"
