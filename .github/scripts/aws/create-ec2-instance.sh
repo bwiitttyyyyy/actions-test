@@ -29,10 +29,10 @@ echo "Enabling SSH access..."
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --profile production
 echo "Enabling HTTP ingress access..."
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 80 --cidr 0.0.0.0/0 --profile production
-aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 80 --cidr ::/0 --profile production
+aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,FromPort=80,ToPort=80,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
 echo "Enabling HTTPS ingress access..."
 aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 443 --cidr 0.0.0.0/0 --profile production
-aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --protocol tcp --port 443 --cidr ::/0 --profile production
+aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,FromPort=443,ToPort=443,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
 echo "Created EC2 security group with ID $EC2_SECURITY_GROUP_ID"
 
 # create the key pair from SSH key 
