@@ -6,7 +6,10 @@ echo "Setting up CentOS..."
 IP_ADDRESS=$(yq r elastic-ip.yml ElasticIp)
 
 # create the SSH key for the new instance from the github secret
-if test -f "$AWS_SSH_KEY_FILENAME"; then
+if test -f "$AWS_SSH_KEY_FILENAME";
+then
+  echo "Deployment user SSH key exists"
+else
   echo "$AWS_SSH_KEY" >> $AWS_SSH_KEY_FILENAME
   sudo chmod 600 $AWS_SSH_KEY_FILENAME
 fi

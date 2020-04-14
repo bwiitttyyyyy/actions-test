@@ -6,7 +6,10 @@ echo "Creating users and providing SSH access..."
 IP_ADDRESS=$(yq r elastic-ip.yml PublicIp)
 
 # create the SSH key for the new instance from the Github Secret
-if test -f "$AWS_SSH_KEY_FILENAME"; then
+if test -f "$AWS_SSH_KEY_FILENAME";
+then
+  echo "Deployment user SSH key exists"
+else
   echo "$AWS_SSH_KEY" >> $AWS_SSH_KEY_FILENAME
   sudo chmod 600 $AWS_SSH_KEY_FILENAME
 fi
