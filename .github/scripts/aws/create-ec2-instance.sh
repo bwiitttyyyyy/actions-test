@@ -96,7 +96,11 @@ done
 
 # ssh into the instance
 echo "Entering instance..."
+
+# create the SSH key from the Github Secret
 echo "$AWS_SSH_KEY" >> aws_ssh_key
 sudo chmod 600 aws_ssh_key
-ssh -A -T -o StrictHostKeyChecking=no -i aws_ssh_key centos@$IP_ADDRESS "hostname" 2>&1
+ssh -A -T -o StrictHostKeyChecking=no -i aws_ssh_key centos@$IP_ADDRESS 'bash -s' < $PWD/.github/scripts/centos/os-setup.sh 2>&1
+
+
 echo "Done."
