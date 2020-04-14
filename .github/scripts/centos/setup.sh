@@ -20,7 +20,23 @@ fi
 # try something
 
 ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS <<-HERE
+# set hostname
 sudo hostnamectl set-hostname $REPOSITORY
+
+# install PHP 7.3
+sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm 
+sudo yum -y install epel-release yum-utils
+sudo yum-config-manager --disable remi-php54
+sudo yum-config-manager --enable remi-php73
+sudo yum -y install php php-cli php-fpm php-mysqlnd php-zip php-devel php-gd php-mcrypt php-mbstring php-curl php-xml php-pear php-bcmath php-json
+php -v
+
+# install Apache
+sudo yum update httpd
+sudo yum install httpd
+sudo systemctl start httpd
+sudo systemctl status httpd
+
 sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sudo shutdown -r now
 HERE
