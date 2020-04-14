@@ -17,13 +17,14 @@ fi
 # add users to the instance
 echo "Adding DevOps users to the instance..."
 aws iam get-group --group-name DevOps --profile production >> devops-users.yml
-cat devops-users.yml
 N_USERS=$(yq r devops-users.yml --collect --length Users.*.UserName)
 echo "Found $N_USERS users"
 for (( USER_INDEX = 0; USER_INDEX <= "$N_USERS"; USER_INDEX++ ));
 do
 USERNAME=$(yq r devops-users.yml Users.[$USER_INDEX].UserName)
 USER_ID=$(yq r devops-users.yml Users.[$USER_INDEX].UserId)
+
+echo "Creating user $USERNAME"
 
 # get the user's public key
 USER_PUBLIC_KEY_ID=$(aws iam list-ssh-public-keys --user-name $USERNAME --profile production | yq r - SSHPublicKeys.[0].SSHPublicKeyId)
@@ -40,7 +41,7 @@ mkdir -p ~/.ssh
 touch ~/.ssh/authorized_keys
 chmod -R go= ~/.ssh
 chown -R $USERNAME:$USERNAME ~/.ssh
-cat $USER_PUBLIC_KEY >> ~/.ssh/authorized_keys
+cat "$USER_PUBLIC_KEY" >> ~/.ssh/authorized_keys
 HERE
 done
 
