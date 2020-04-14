@@ -51,4 +51,13 @@ INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceId)
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Created instance with ID $INSTANCE_ID"
 
+# create Elastic IP address
+echo "Creating Elastic IP address..."
+aws ec2 allocate-address --domain vpc --profile production >> elastic-ip.yml
+ELASTIC_IP_ALLOCATION_ID=$(yq r elastic-ip.yml AllocationId)
+IP_ADDRESS=$(yq r elastic-ip.yml PublicIp)
+echo "Associating IP..."
+aws ec2 associate-address --allocation-id $ELASTIC_IP_ALLOCATION_ID --instance-id $INSTANCE_ID --profile production
+echo "Created Elastic IP address $IP_ADDRESS"
+
 echo "Done."
