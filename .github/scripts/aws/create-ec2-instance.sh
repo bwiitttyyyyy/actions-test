@@ -52,16 +52,18 @@ aws ec2 create-tags --resources $INSTANCE_ID --tags Key=commit,Value=$GITHUB_SHA
 echo "Created instance with ID $INSTANCE_ID"
 
 # wait for instance become of state "running"
-echo "Waiting for instance $INSTANCE_ID to run..."
+echo "Waiting for instance $INSTANCE_ID to be up and running..."
 aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
 EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+EC2_INSTANCE_STATUS_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
 while [ "$EC2_INSTANCE_STATUS_CODE" != "16" ]
 do
-echo "Status: $EC2_INSTANCE_STATUS_CODE"
-sleep 3s
-rm ec2-instance-status.yml
-aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
-EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+  echo "Status: $EC2_INSTANCE_STATUS_NAME"
+  sleep 5s
+  rm ec2-instance-status.yml
+  aws ec2 describe-instance-status --instance-ids $INSTANCE_ID --profile production >> ec2-instance-status.yml
+  EC2_INSTANCE_STATUS_CODE=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Code)
+  EC2_INSTANCE_STATUS_NAME=$(yq r ec2-instance-status.yml InstanceStatuses.[0].InstanceState.Name)
 done
 echo "Instance is now running"
 
@@ -73,5 +75,12 @@ IP_ADDRESS=$(yq r elastic-ip.yml PublicIp)
 echo "Associating IP..."
 aws ec2 associate-address --allocation-id $ELASTIC_IP_ALLOCATION_ID --instance-id $INSTANCE_ID --profile production
 echo "Created Elastic IP address $IP_ADDRESS"
+
+# will neeeeeed to get all of the users' ssh keys here before we log in
+
+# ssh into the instance
+echo "Entering instance..."
+echo "$AWS_SSH_KEY" >> aws_ssh_key
+ssh -i aws_ssh_key centos@$IP_ADDRESS
 
 echo "Done."
