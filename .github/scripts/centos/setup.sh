@@ -18,8 +18,8 @@ else
   sudo chmod 600 $AWS_SSH_KEY_FILENAME
 fi
 
-# try something
-
+# install all of the necessary dependencies onto the CentOS machine
+echo "Installing dependencies..."
 ssh -A -T -o StrictHostKeyChecking=no -i $AWS_SSH_KEY_FILENAME centos@$IP_ADDRESS <<-HERE
 # set hostname
 echo "Setting hostname..."
