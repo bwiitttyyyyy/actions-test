@@ -2,6 +2,7 @@
 
 # get the github repo name without the user
 REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
+REPOSITORY_WITH_UNDERSCORE="${$REPOSITORY/-/_}"
 
 # create the security group
 echo "Creating RDS security group..."
@@ -34,8 +35,8 @@ aws rds create-db-cluster \
   --db-cluster-identifier $REPOSITORY-cluster \
   --engine aurora \
   --engine-version 5.6.10a \
-  --master-username $REPOSITORY \
-  --master-user-password $REPOSITORY \
+  --master-username $REPOSITORY_WITH_UNDERSCORE \
+  --master-user-password $REPOSITORY_WITH_UNDERSCORE \
   --db-subnet-group-name $PRIVATE_SUBNET_GROUP_ID \
   --vpc-security-group-ids $RDS_SECURITY_GROUP_ID \
   --port 3306 \
