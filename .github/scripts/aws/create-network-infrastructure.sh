@@ -62,7 +62,7 @@ aws ec2 create-tags --resources $PUBLIC_ROUTE_TABLE_ID --tags Key=commit,Value=$
 echo "Creating route to public internet..."
 aws ec2 create-route --route-table-id $PUBLIC_ROUTE_TABLE_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $GATEWAY_ID --profile production
 echo "Associating route table with public subnet (making public)..."
-aws ec2 associate-route-table  --subnet-id $PUBLIC_SUBNET_ID --route-table-id $ROUTE_TABLE_ID --profile production
+aws ec2 associate-route-table  --subnet-id $PUBLIC_SUBNET_ID --route-table-id $PUBLIC_ROUTE_TABLE_ID --profile production
 echo "Created custom public route table"
 
 # create a custom private route table for vpc
