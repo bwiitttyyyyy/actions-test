@@ -35,7 +35,7 @@ echo "Created private subnet #2 with ID $PRIVATE_SUBNET_2_ID"
 # create subnet group out of private subnets for the RDS instance
 echo "Creating private RB subnet group..."
 aws rds create-db-subnet-group \
-  --db-subnet-group-name $REPOSITORY \
+  --db-subnet-group-name $REPOSITORY-$GITHUB_SHA \
   --db-subnet-group-description "Subnet group for RDS cluster" \
   --subnet-ids $PRIVATE_SUBNET_1_ID $PRIVATE_SUBNET_2_ID \
   --profile production \

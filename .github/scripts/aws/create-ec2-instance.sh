@@ -36,8 +36,18 @@ echo "Created key pair with name $GITHUB_SHA"
 
 # create the instance
 echo "Creating instance..."
-SUBNET_ID=$(yq r subnet.yml Subnet.SubnetId)
-aws ec2 run-instances --image-id ami-04a25c39dc7a8aebb --count 1 --instance-type t2.micro --key-name $GITHUB_SHA --subnet $SUBNET_ID --region ca-central-1 --security-group-ids $EC2_SECURITY_GROUP_ID --profile production >> instance.yml
+PUBLIC_SUBNET_ID=$(yq r public-subnet.yml Subnet.SubnetId)
+aws ec2 run-instances \
+  --image-id ami-04a25c39dc7a8aebb\
+  --count 1 \
+  --instance-type t2.micro \
+  --key-name $GITHUB_SHA \
+  --subnet $PUBLIC_SUBNET_ID \
+  --region ca-central-1 \
+  --security-group-ids $EC2_SECURITY_GROUP_ID \
+  --profile production \
+  >> instance.yml
+
 INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceId)
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
 echo "Created instance with ID $INSTANCE_ID"
