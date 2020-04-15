@@ -2,7 +2,8 @@
 
 # get the github repo name without the user
 REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
-REPOSITORY_WITH_UNDERSCORE="${$REPOSITORY/-/_}"
+REPOSITORY_WITH_UNDERSCORE="${REPOSITORY/-/_}"
+echo "repo w/ under $REPOSITORY_WITH_UNDERSCORE"
 
 # create the security group
 echo "Creating RDS security group..."
