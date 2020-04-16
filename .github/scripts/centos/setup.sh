@@ -6,7 +6,8 @@ echo "Setting up CentOS..."
 IP_ADDRESS=$(yq r elastic-ip.yml PublicIp)
 
 # get the github repo name without the user
-REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
+#REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
+REPOSITORY="isabella"
 echo "REPO: $REPOSITORY"
 
 # create the SSH key for the new instance from the github secret

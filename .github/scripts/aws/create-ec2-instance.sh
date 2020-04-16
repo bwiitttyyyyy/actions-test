@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#AWS_DEPLOYMENT_USERNAME=deployment@madhattertech.ca
-#GITHUB_SHA=12345
-#GITHUB_REPOSITORY=dontworrru
-
 echo "Creating EC2 instance..."
 
 # create the security group
@@ -11,7 +7,7 @@ echo "Creating EC2 instance security group..."
 VPC_ID=$(yq r vpc.yml Vpc.VpcId)
 aws ec2 create-security-group --group-name ec2-$GITHUB_SHA --description "Security group for EC2 instance of application at commit $GITHUB_SHA" --vpc-id $VPC_ID --profile production >> ec2-security-group.yml
 EC2_SECURITY_GROUP_ID=$(yq r ec2-security-group.yml GroupId)
-aws ec2 create-tags --resources $EC2_SECURITY_GROUP_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY --profile production
+aws ec2 create-tags --resources $EC2_SECURITY_GROUP_ID --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$REPOSITORY --profile production
 echo "Enable all outbound traffic..."
 #aws ec2 authorize-security-group-egress --group-id $EC2_SECURITY_GROUP_ID --ip-permissions IpProtocol=tcp,Ipv6Ranges='[{CidrIpv6=::/0}]' --profile production
 echo "Enabling SSH access..."
@@ -51,7 +47,7 @@ aws ec2 run-instances \
 INSTANCE_ID=$(yq r instance.yml Instances.[0].InstanceId)
 aws ec2 create-tags \
   --resources $INSTANCE_ID \
-  --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY \
+  --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$REPOSITORY \
   --profile production
 echo "Created instance with ID $INSTANCE_ID"
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # get the github repo name without the user
-REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
+#REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
+REPOSITORY="isabella"
 REPOSITORY_WITH_UNDERSCORE="${REPOSITORY/-/_}"
 echo "repo w/ under $REPOSITORY_WITH_UNDERSCORE"
 
@@ -17,7 +18,7 @@ aws ec2 create-security-group \
 RDS_SECURITY_GROUP_ID=$(yq r rds-security-group.yml GroupId)
 aws ec2 create-tags \
   --resources $RDS_SECURITY_GROUP_ID \
-  --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$GITHUB_REPOSITORY \
+  --tags Key=commit,Value=$GITHUB_SHA Key=repository,Value=$REPOSITORY \
   --profile production
 
 echo "Adding ingress MySQL access..."
@@ -41,6 +42,7 @@ aws rds create-db-cluster \
   --db-subnet-group-name $PRIVATE_SUBNET_GROUP_ID \
   --vpc-security-group-ids $RDS_SECURITY_GROUP_ID \
   --port 3306 \
+  --storage-encrypted \
   --profile production \
   >> db-cluster.yml
 DB_CLUSTER_ID=$(yq r db-cluster.yml DBCluster.DBClusterIdentifier)
