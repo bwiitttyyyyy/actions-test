@@ -47,15 +47,15 @@ jobs:
     - name: Create EC2 Instance
       run: sh ./.github/scripts/aws/create-ec2-instance.sh
       shell: bash
-#
-#   - name: Add DevOps Users to EC2 Instance
-#     run: bash ./.github/scripts/centos/add-users.sh
-#     shell: bash
-#
-#   - name: Setup CentOS
-#     run: sh ./.github/scripts/centos/setup.sh
-#     shell: bash
-#
+
+    - name: Add DevOps Users to EC2 Instance
+      run: bash ./.github/scripts/centos/add-users.sh
+      shell: bash
+ 
+    - name: Setup CentOS
+      run: sh ./.github/scripts/centos/setup.sh
+      shell: bash
+
     - name: Create RDS Instance
       run: bash ./.github/scripts/aws/create-rds-instance.sh
       shell: bash
