@@ -2,7 +2,6 @@
 
 # get the github repo name without the user
 #REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
-REPOSITORY="isabella"
 REPOSITORY_WITH_UNDERSCORE="${REPOSITORY/-/_}"
 echo "repo w/ under $REPOSITORY_WITH_UNDERSCORE"
 

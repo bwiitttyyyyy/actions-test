@@ -22,6 +22,7 @@ aws ec2 authorize-security-group-ingress --group-id $EC2_SECURITY_GROUP_ID --ip-
 echo "Created EC2 security group with ID $EC2_SECURITY_GROUP_ID"
 
 # create the key pair from SSH key 
+# TODO tag the key pair
 echo "Creating key pair..."
 AWS_DEPLOYMENT_PUBLIC_KEY_ID=$(aws iam list-ssh-public-keys --user-name $AWS_DEPLOYMENT_USERNAME --profile production | yq r - SSHPublicKeys.[0].SSHPublicKeyId)
 aws iam get-ssh-public-key --user-name $AWS_DEPLOYMENT_USERNAME --ssh-public-key-id $AWS_DEPLOYMENT_PUBLIC_KEY_ID --encoding SSH --profile production \

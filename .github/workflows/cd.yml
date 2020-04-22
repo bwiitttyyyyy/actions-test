@@ -6,6 +6,8 @@ on:
       - master
         
 env:
+  REPOSITORY: trovo
+  
   AWS_DEPLOYMENT_USERNAME: deployment-madhatter
 
   # the AWS credentials for the staging organization
@@ -52,9 +54,13 @@ jobs:
       run: bash ./.github/scripts/centos/add-users.sh
       shell: bash
  
-    - name: Setup CentOS
+    - name: CentOS Setup
       run: sh ./.github/scripts/centos/setup.sh
       shell: bash
+    
+      #- name: Apache + SSL Setup
+      #run: sh ./.github/scripts/centos/apache-setup.sh && sh ./.github/scripts/centos/ssl-setup.sh
+      #shell: bash
 
     - name: Create RDS Instance
       run: bash ./.github/scripts/aws/create-rds-instance.sh

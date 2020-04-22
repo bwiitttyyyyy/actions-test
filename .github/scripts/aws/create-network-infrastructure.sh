@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#REPOSITORY=$(echo "$GITHUB_REPOSITORY" | cut -d '/' -f 2)
-REPOSITORY="isabella"
 echo "Creating Network Infrastructure..."
 
 # create the VPC
